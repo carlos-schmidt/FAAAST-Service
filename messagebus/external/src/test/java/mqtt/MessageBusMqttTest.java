@@ -37,6 +37,7 @@ import io.adminshell.aas.v3.model.Reference;
 import io.adminshell.aas.v3.model.impl.DefaultKey;
 import io.adminshell.aas.v3.model.impl.DefaultProperty;
 import io.adminshell.aas.v3.model.impl.DefaultReference;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -45,6 +46,7 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -74,6 +76,9 @@ public class MessageBusMqttTest {
                     .build())
             .build();
 
+
+    private static final MessageBusMqttConfig internalMessageBusMqttConfig = MessageBusMqttConfig.builder().internal(true).build();
+
     @BeforeClass
     public static void init() {
         valueChangeMessage = new ValueChangeEventMessage();
@@ -90,17 +95,27 @@ public class MessageBusMqttTest {
 
         errorMessage = new ErrorEventMessage();
         errorMessage.setElement(property1Reference);
-        errorMessage.setErrorLevel(ErrorLevel.ERROR);
+        errorMessage.setLevel(ErrorLevel.ERROR);
+        initMessageBusMqttConfig();
     }
 
+    private static void initMessageBusMqttConfig() {
+        internalMessageBusMqttConfig.setBrokerKeystorePath("src/test/resources/serverkeystore.jks");
+        internalMessageBusMqttConfig.setBrokerKeystorePass("password");
+        internalMessageBusMqttConfig.setPasswordFile("src/test/resources/password_file.conf");
+        internalMessageBusMqttConfig.setUsername("user");
+        internalMessageBusMqttConfig.setPassword("password");
+        internalMessageBusMqttConfig.setClientKeystorePath("src/test/resources/clientkeystore.jks");
+        internalMessageBusMqttConfig.setClientKeystorePass("password");
+    }
 
     @Test
-    public void testExactTypeSubscription() throws InterruptedException, MessageBusException {
+    public void testExactTypeSubscription() throws InterruptedException {
         MessageBusMqtt messageBus = new MessageBusMqtt();
+
         try {
-            messageBus.init(CoreConfig.builder().build(), MessageBusMqttConfig.builder().internal(true).build(), SERVICE_CONTEXT);
-        }
-        catch (ConfigurationInitializationException e) {
+            messageBus.init(CoreConfig.builder().build(), internalMessageBusMqttConfig, SERVICE_CONTEXT);
+        } catch (ConfigurationInitializationException e) {
             throw new RuntimeException(e);
         }
         messageBus.start();
@@ -123,9 +138,8 @@ public class MessageBusMqttTest {
     public void testSuperTypeSubscription() throws InterruptedException {
         MessageBusMqtt messageBus = new MessageBusMqtt();
         try {
-            messageBus.init(CoreConfig.builder().build(), MessageBusMqttConfig.builder().build(), SERVICE_CONTEXT);
-        }
-        catch (ConfigurationInitializationException e) {
+            messageBus.init(CoreConfig.builder().build(), internalMessageBusMqttConfig, SERVICE_CONTEXT); // TODO this config was not internal.
+        } catch (ConfigurationInitializationException e) {
             throw new RuntimeException(e);
         }
         messageBus.start();
@@ -141,8 +155,7 @@ public class MessageBusMqttTest {
         messages.forEach(x -> {
             try {
                 messageBus.publish(x);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Assert.fail();
             }
         });
@@ -158,9 +171,8 @@ public class MessageBusMqttTest {
     public void testDistinctTypesSubscription() throws InterruptedException {
         MessageBusMqtt messageBus = new MessageBusMqtt();
         try {
-            messageBus.init(CoreConfig.builder().build(), MessageBusMqttConfig.builder().internal(true).build(), SERVICE_CONTEXT);
-        }
-        catch (ConfigurationInitializationException e) {
+            messageBus.init(CoreConfig.builder().build(), internalMessageBusMqttConfig, SERVICE_CONTEXT);
+        } catch (ConfigurationInitializationException e) {
             throw new RuntimeException(e);
         }
         messageBus.start();
@@ -181,8 +193,7 @@ public class MessageBusMqttTest {
         messages.values().stream().flatMap(x -> x.stream()).forEach(x -> {
             try {
                 messageBus.publish(x);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Assert.fail();
             }
         });
@@ -196,7 +207,7 @@ public class MessageBusMqttTest {
      * public void testValueChangeTypeSubscription() throws InterruptedException {
      * MessageBusMqtt messageBus = new MessageBusMqtt();
      * try {
-     * messageBus.init(CoreConfig.builder().build(), MessageBusMqttConfig.builder().internal(true).build(),
+     * messageBus.init(CoreConfig.builder().build(), internalMessageBusMqttConfig,
      * SERVICE_CONTEXT);
      * }
      * catch (ConfigurationInitializationException e) {
@@ -236,9 +247,8 @@ public class MessageBusMqttTest {
     public void testNotMatchingSubscription() throws InterruptedException {
         MessageBusMqtt messageBus = new MessageBusMqtt();
         try {
-            messageBus.init(CoreConfig.builder().build(), MessageBusMqttConfig.builder().internal(true).build(), SERVICE_CONTEXT);
-        }
-        catch (ConfigurationInitializationException e) {
+            messageBus.init(CoreConfig.builder().build(), internalMessageBusMqttConfig, SERVICE_CONTEXT);
+        } catch (ConfigurationInitializationException e) {
             throw new RuntimeException(e);
         }
         messageBus.start();
@@ -251,8 +261,7 @@ public class MessageBusMqttTest {
                 }));
         try {
             messageBus.publish(valueChangeMessage);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Assert.fail();
         }
         condition.await(DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
@@ -264,9 +273,8 @@ public class MessageBusMqttTest {
     public void testSubscribeUnsubscribe() throws InterruptedException {
         MessageBusMqtt messageBus = new MessageBusMqtt();
         try {
-            messageBus.init(CoreConfig.builder().build(), MessageBusMqttConfig.builder().internal(true).build(), SERVICE_CONTEXT);
-        }
-        catch (ConfigurationInitializationException e) {
+            messageBus.init(CoreConfig.builder().build(), internalMessageBusMqttConfig, SERVICE_CONTEXT);
+        } catch (ConfigurationInitializationException e) {
             throw new RuntimeException(e);
         }
         messageBus.start();
@@ -280,8 +288,7 @@ public class MessageBusMqttTest {
                 })));
         try {
             messageBus.publish(valueChangeMessage);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Assert.fail();
         }
         Assert.assertFalse(condition.await(DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS));
