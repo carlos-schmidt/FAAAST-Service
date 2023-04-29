@@ -26,8 +26,10 @@ import io.netty.handler.codec.mqtt.MqttMessageType;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import io.netty.handler.codec.mqtt.MqttPublishVariableHeader;
 import io.netty.handler.codec.mqtt.MqttQoS;
+
 import java.io.IOException;
 import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +51,7 @@ public class MoquetteServer {
      * The MQTT Id used by FA³ST service to connect to the MQTT broker.
      */
     private final String fastClientId;
-    private MessageBusMqttConfig messageBusMqttConfig;
+    private final MessageBusMqttConfig messageBusMqttConfig;
 
     public MoquetteServer(MessageBusMqttConfig config) {
         fastClientId = "FA³ST MQTT Server (" + UUID.randomUUID() + ")";
@@ -87,16 +89,16 @@ public class MoquetteServer {
         config.setProperty(BrokerConstants.HOST_PROPERTY_NAME, messageBusMqttConfig.getHost());
         config.setProperty(BrokerConstants.ALLOW_ANONYMOUS_PROPERTY_NAME, Boolean.TRUE.toString());
         config.setProperty(BrokerConstants.WEB_SOCKET_PORT_PROPERTY_NAME, Integer.toString(messageBusMqttConfig.getWebsocketPort()));
-        String keystorePath = messageBusMqttConfig.getKeystorePath();
+        String keystorePath = messageBusMqttConfig.getBrokerKeystorePath();
         if (!keystorePath.isEmpty()) {
             LOGGER.info("Configuring keystore for ssl");
             config.setProperty(BrokerConstants.JKS_PATH_PROPERTY_NAME, keystorePath);
-            config.setProperty(BrokerConstants.KEY_STORE_PASSWORD_PROPERTY_NAME, messageBusMqttConfig.getKeystorePass());
-            config.setProperty(BrokerConstants.KEY_MANAGER_PASSWORD_PROPERTY_NAME, messageBusMqttConfig.getKeymanagerPass());
+            config.setProperty(BrokerConstants.KEY_STORE_PASSWORD_PROPERTY_NAME, messageBusMqttConfig.getBrokerKeystorePass());
+            config.setProperty(BrokerConstants.KEY_MANAGER_PASSWORD_PROPERTY_NAME, messageBusMqttConfig.getBrokerKeymanagerPass());
             config.setProperty(BrokerConstants.SSL_PORT_PROPERTY_NAME, Integer.toString(messageBusMqttConfig.getSslPort()));
             config.setProperty(BrokerConstants.WSS_PORT_PROPERTY_NAME, Integer.toString(messageBusMqttConfig.getSslWebsocketPort()));
         }
-        String passwordPath = messageBusMqttConfig.getKeystorePath();
+        String passwordPath = messageBusMqttConfig.getPasswordFile();
         if (!passwordPath.isEmpty()) {
             config.setProperty(BrokerConstants.PASSWORD_FILE_PROPERTY_NAME, passwordPath);
         }
