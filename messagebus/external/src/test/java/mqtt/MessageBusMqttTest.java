@@ -17,7 +17,6 @@ package mqtt;
 import de.fraunhofer.iosb.ilt.faaast.service.ServiceContext;
 import de.fraunhofer.iosb.ilt.faaast.service.config.CoreConfig;
 import de.fraunhofer.iosb.ilt.faaast.service.exception.ConfigurationInitializationException;
-import de.fraunhofer.iosb.ilt.faaast.service.exception.MessageBusException;
 import de.fraunhofer.iosb.ilt.faaast.service.messagebus.mqtt.MessageBusMqtt;
 import de.fraunhofer.iosb.ilt.faaast.service.messagebus.mqtt.MessageBusMqttConfig;
 import de.fraunhofer.iosb.ilt.faaast.service.model.messagebus.EventMessage;
@@ -77,7 +76,7 @@ public class MessageBusMqttTest {
             .build();
 
 
-    private static final MessageBusMqttConfig internalMessageBusMqttConfig = MessageBusMqttConfig.builder().internal(true).build();
+    private static MessageBusMqttConfig internalMessageBusMqttConfig;
 
     @BeforeClass
     public static void init() {
@@ -100,13 +99,16 @@ public class MessageBusMqttTest {
     }
 
     private static void initMessageBusMqttConfig() {
-        internalMessageBusMqttConfig.setBrokerKeystorePath("src/test/resources/serverkeystore.jks");
-        internalMessageBusMqttConfig.setBrokerKeystorePass("password");
-        internalMessageBusMqttConfig.setPasswordFile("src/test/resources/password_file.conf");
-        internalMessageBusMqttConfig.setUsername("user");
-        internalMessageBusMqttConfig.setPassword("password");
-        internalMessageBusMqttConfig.setClientKeystorePath("src/test/resources/clientkeystore.jks");
-        internalMessageBusMqttConfig.setClientKeystorePass("password");
+        internalMessageBusMqttConfig = MessageBusMqttConfig.builder()
+                .internal(true)
+                .brokerKeystorePath("src/test/resources/serverkeystore.jks")
+                .brokerKeystorePass("password")
+                .passwordFile("src/test/resources/password_file.conf")
+                .username("user")
+                .password("password")
+                .clientKeystorePath("src/test/resources/clientkeystore.jks")
+                .clientKeystorePass("password")
+                .build();
     }
 
     @Test
