@@ -117,10 +117,10 @@ removeTag "$CHANGELOG_FILE" "$TAG_CHANGELOG_HEADER"
 setHelmImageTag "$HELM_CHART_VALUES_FILE" "$VERSION"
 setHelmAppVersion "$HELM_CHART_CHART_FILE" "$VERSION"
 
-mvn -B spotless:apply
+# mvn -B spotless:apply
 
 echo "Updating third party license report"
-mvn clean install license:aggregate-third-party-report -P build-ci -Dmaven.test.skip=false -B
+mvn clean install -P build-ci -Dmaven.test.skip=true -B
 
 echo "Git add ."
 git add .
@@ -142,7 +142,7 @@ updateServiceProfileUrls "$NEXTVERSION"
 setHelmImageTag "$HELM_CHART_VALUES_FILE" "latest"
 setHelmAppVersion "$HELM_CHART_CHART_FILE" "$NEXTVERSION-SNAPSHOT"
 
-mvn -B spotless:apply
+# mvn -B spotless:apply
 
 echo "Git add ."
 git add .

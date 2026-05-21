@@ -1,6 +1,5 @@
 # Release Notes
-<!--start:changelog-header-->
-## 1.4.0-SNAPSHOT (current development version)<!--end:changelog-header-->
+## 1.4.0
 
 **New Features & Major Changes**
 - General
