@@ -429,14 +429,14 @@ public enum ServiceSpecificationProfile {
                     GenerateSerializationByIdsRequest.class,
                     GetSelfDescriptionRequest.class)),
     FAAAST_IMPORT(
-            "https://github.com/FraunhoferIOSB/FAAAST-Service/API/1/4/Import",
+            "https://github.com/FraunhoferIOSB/FAAAST-Service/API/1/5/Import",
             List.of(),
             List.of(ImportRequest.class)),
     FAAAST_RESET(
-            "https://github.com/FraunhoferIOSB/FAAAST-Service/API/1/4/Reset",
+            "https://github.com/FraunhoferIOSB/FAAAST-Service/API/1/5/Reset",
             List.of(),
             List.of(ResetRequest.class)),
-    FAAAST_OPERATION_PROVIDER_RUNTIME("https://github.com/FraunhoferIOSB/FAAAST-Service/API/1/4/OperationProviderRuntime",
+    FAAAST_OPERATION_PROVIDER_RUNTIME("https://github.com/FraunhoferIOSB/FAAAST-Service/API/1/5/OperationProviderRuntime",
             List.of(),
             List.of(
                     PostOperationProviderByPathRequest.class,
